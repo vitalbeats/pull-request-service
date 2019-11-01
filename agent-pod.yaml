@@ -12,7 +12,7 @@ spec:
       image: python:3.7
       tty: true
       command:
-        - "pip install poetry && cat"
+        - cat
       volumeMounts:
         - name: workspace-volume
           mountPath: /home/jenkins/agent

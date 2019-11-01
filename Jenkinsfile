@@ -11,6 +11,14 @@ pipeline {
     }
     
     stages {
+        stage('Prepare') {
+            steps {
+                container('poetry') {
+                    sh 'pip3 install poetry'
+                }
+            }
+        }
+    
         stage('Build') {
             steps {
                 container('poetry') {
