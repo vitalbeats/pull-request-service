@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Prepare') {
             steps {
-                container('poetry') {
+                container('python') {
                     sh 'pip3 install poetry'
                 }
             }
@@ -21,7 +21,7 @@ pipeline {
     
         stage('Build') {
             steps {
-                container('poetry') {
+                container('python') {
                     sh 'poetry install && poetry build'
                 }
             }
@@ -29,7 +29,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                container('poetry') {
+                container('python') {
                     sh 'poetry run pytest'
                 }
             }
