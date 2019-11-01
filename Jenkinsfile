@@ -10,39 +10,23 @@ pipeline {
         timestamps()
     }
     
-    stages {
-        stage('Prepare') {
-            steps {
-                container('python') {
-                    sh 'pip3 install poetry'
-                }
-            }
-        }
-    
+    stages {  
         stage('Build') {
             steps {
-                container('python') {
-                    sh 'poetry install && poetry build'
+                container('docker') {
+                    sh 'docker build -t pull-request-service:build .'
                 }
             }
         }
 
-        stage('Test') {
-            steps {
-                container('python') {
-                    sh 'poetry run pytest'
-                }
-            }
-        }
-
-        stage('Docker') {
+        stage('Push') {
             when {
                 branch 'master'
             }
         
             steps {
                 container('docker') {
-                    sh 'docker build -t docker-registry.default.svc:5000/openshift-build/pull-request-service:latest .'
+                    sh 'docker tag pull-request-service:build docker-registry.default.svc:5000/openshift-build/pull-request-service:latest'
                     sh 'docker push docker-registry.default.svc:5000/openshift-build/pull-request-service:latest'
                 }
             }
