@@ -11,11 +11,6 @@ twisted = "^19.7"
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
 
-[[tool.poetry.source]]
-name = "vitalbeats"
-url = "https://pypiserver.vitalbeats.dev/simple/"
-secondary = true
-
 [tool.poetry.scripts]
 server = "pull_request_service.server:main"
 
