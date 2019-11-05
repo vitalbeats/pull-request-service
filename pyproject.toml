@@ -8,13 +8,9 @@ authors = ["Stephen Badger <stephen.badger@vitalbeats.com>"]
 python = "^3.7"
 twisted = "^19.7"
 
-[tool.poetry.dev-dependencies]
-pytest = "^3.0"
-
 [tool.poetry.scripts]
 server = "pull_request_service.server:main"
 
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
-
