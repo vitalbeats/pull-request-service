@@ -1,0 +1,102 @@
+---
+- name: Create pull request project
+  oc_project:
+    name: "{{ openshift_pull_request_project }}"
+
+- block:
+  - name: Copy build key
+    copy:
+      src: "{{openshift_pull_request_build_key}}"
+      dest: "{{mktemp.stdout}}/jenkins-build.key"
+    when: openshift_pull_request_build_key is exists
+    changed_when: no
+
+  - name: Remove any existing secret
+    oc_secret:
+      state: absent
+      namespace: "{{ openshift_pull_request_project }}"
+      name: pull-request-build
+
+  - name: Create build secret
+    command: >
+      {{ openshift_client_binary }} --config={{ mktemp.stdout }}/admin.kubeconfig
+      secrets new pull-request-build ssh-privatekey={{mktemp.stdout}}/pull-request-build.key
+      -n {{ openshift_pull_request_project }}
+    register: generation_apply
+    failed_when: "'error' in generation_apply.stderr or (generation_apply.rc | int != 0)"
+    changed_when: no
+
+- name: Create web token secret
+  oc_secret:
+    name: pull-request-secret
+    namespace: "{{ openshift_pull_request_project }}"
+    contents:
+      - path: webhook
+        data: "{{ openshift_pull_request_secret }}"
+
+- name: Generate ImageStream
+  template:
+    src: image_stream.j2
+    dest: "{{ mktemp.stdout }}/templates/pull_request_is.yaml"
+  vars: {}
+  changed_when: no
+
+- name: Generate BuildConfig
+  template:
+    src: build_config.j2
+    dest: "{{ mktemp.stdout }}/templates/pull_request_bc.yaml"
+  changed_when: no
+
+- name: Generate DeploymentController
+  template:
+    src: deployment_controller.j2
+    dest: "{{ mktemp.stdout }}/templates/pull_request_dc.yaml"
+  vars:
+    requests_cpu: "{{ openshift_pull_request_requests_cpu | default('50m') }}"
+    limits_cpu: "{{ openshift_pull_request_limits_cpu | default('50m') }}"
+    requests_memory: "{{ openshift_pull_request_requests_memory | default('128Mi') }}"
+    limits_memory: "{{ openshift_pull_request_limits_memory | default('128Mi') }}"
+  changed_when: no
+
+- name: Generate Service
+  template:
+    src: service.j2
+    dest: "{{ mktemp.stdout }}/templates/pull_request_svc.yaml"
+  vars: {}
+  changed_when: no
+
+- name: Generate Route
+  template:
+    src: route.j2
+    dest: "{{ mktemp.stdout }}/templates/pull_request_route.yaml"
+  vars:
+    host: "{{ openshift_pull_request_hostname }}"
+  changed_when: no
+
+- find:
+    paths: "{{ mktemp.stdout }}/templates"
+    patterns: ".*.yaml"
+    use_regex: true
+  register: object_def_files
+  changed_when: no
+
+- slurp:
+    src: "{{ item.path }}"
+  register: object_defs
+  with_items: "{{ object_def_files.files }}"
+  changed_when: no
+
+- name: Create objects
+  include_tasks: oc_apply.yml
+  vars:
+    kubeconfig: "{{ mktemp.stdout }}/admin.kubeconfig"
+    namespace: "{{ openshift_pull_request_project }}"
+    file_name: "{{ item.source }}"
+    file_content: "{{ item.content | b64decode | from_yaml }}"
+  with_items: "{{ object_defs.results }}"
+
+- name: Build pull request service
+  include_tasks: build.yml
+  tags: openshift_pull_request_start_cluster
+  when:
+    - openshift_pull_request_start_cluster | default(true) | bool

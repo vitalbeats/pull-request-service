@@ -1,0 +1,8 @@
+---
+- name: Trigger build
+  command: >
+    {{ openshift_client_binary }} --config={{ mktemp.stdout }}/admin.kubeconfig
+    start-build pull-request-service -n {{ openshift_pull_request_project }}
+  register: generation_apply
+  failed_when: "'error' in generation_apply.stderr or (generation_apply.rc | int != 0)"
+  changed_when: no
