@@ -37,7 +37,6 @@ spec:
           requests:
             cpu: {{ requests_cpu }}
             memory: {{ requests_memory }}
-      nodeSelector: {{ node_selector }}
   triggers:
   - type: ConfigChange
   - type: ImageChange
