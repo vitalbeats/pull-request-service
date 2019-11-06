@@ -7,7 +7,7 @@
   - name: Copy build key
     copy:
       src: "{{openshift_pull_request_build_key}}"
-      dest: "{{mktemp.stdout}}/jenkins-build.key"
+      dest: "{{mktemp.stdout}}/pull-request-build.key"
     when: openshift_pull_request_build_key is exists
     changed_when: no
 
