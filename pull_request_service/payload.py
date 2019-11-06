@@ -21,9 +21,8 @@ class PayloadHandler(resource.Resource):
             sig_parts = secret.split('=', 1)
             if len(sig_parts) > 1 and hmac.compare_digest(sig_parts[1], digest):
                 content_as_json = json.loads(content)
-                if event == 'pull_request':
-                    project = content_as_json['repository']['name'].lower() + '-pr-' + str(content_as_json['number'])
-                    print('Received pull request notification for ' + project + ' with action ' + content_as_json['action'])
+                project = content_as_json['repository']['name'].lower() + '-pr-' + str(content_as_json['number'])
+                print('Received pull request notification for ' + project + ' with action ' + content_as_json['action'])
                 return content
         request.setResponseCode(403)
         return 'Forbidden.'.encode('utf-8')
