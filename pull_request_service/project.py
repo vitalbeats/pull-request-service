@@ -17,4 +17,4 @@ class ProjectList():
         self.dyn_client = DynamicClient(client.ApiClient(configuration=k8s_config))
 
     def delete(self, project_name):
-        self.dyn_client.resources.delete(name=project_name, api_version='project.openshift.io/v1', kind='Project')
+        self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').delete(name=project_name)
