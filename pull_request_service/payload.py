@@ -3,6 +3,7 @@ import hmac
 from hashlib import sha1
 import json
 from pull_request_service import webhook_token
+from pull_request_service import project
 
 class PayloadHandler(resource.Resource):
     isLeaf = True
@@ -21,10 +22,12 @@ class PayloadHandler(resource.Resource):
             sig_parts = secret.split('=', 1)
             if len(sig_parts) > 1 and hmac.compare_digest(sig_parts[1], digest):
                 content_as_json = json.loads(content)
+                projects = project.ProjectLoader()
+                projects.print()
                 if event == 'pull_request':
-                    project = content_as_json['repository']['name'].lower() + '-pr-' + str(content_as_json['number'])
-                    print('Received pull request notification for ' + project + ' with action ' + content_as_json['action'])
-                    return project
+                    project_name = content_as_json['repository']['name'].lower() + '-pr-' + str(content_as_json['number'])
+                    print('Received pull request notification for ' + project_name + ' with action ' + content_as_json['action'])
+                    return project_name
                 return content
         request.setResponseCode(403)
         return 'Forbidden.'.encode('utf-8')
