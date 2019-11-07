@@ -27,7 +27,7 @@ class PayloadHandler(resource.Resource):
                 if event == 'pull_request':
                     project_name = content_as_json['repository']['name'].lower() + '-pr-' + str(content_as_json['number'])
                     print('Received pull request notification for ' + project_name + ' with action ' + content_as_json['action'])
-                    return project_name
+                    return project_name.encode('utf-8')
                 return content
         request.setResponseCode(403)
         return 'Forbidden.'.encode('utf-8')
