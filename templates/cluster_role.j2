@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ClusterRole
+metadata:
+  name: project-deleter
+rules:
+- apiGroups:
+  - project.openshift.io
+  attributeRestrictions: null
+  resources:
+  - projects
+  verbs:
+  - 'delete'
