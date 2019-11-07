@@ -22,11 +22,10 @@ class PayloadHandler(resource.Resource):
             sig_parts = secret.split('=', 1)
             if len(sig_parts) > 1 and hmac.compare_digest(sig_parts[1], digest):
                 content_as_json = json.loads(content)
-                projects = project.ProjectLoader()
-                # projects.print()
-                if event == 'pull_request':
+                projects = project.ProjectList()
+                if event == 'pull_request' and content_as_json['action'] == 'closed':
                     project_name = content_as_json['repository']['name'].lower() + '-pr-' + str(content_as_json['number'])
-                    print('Received pull request notification for ' + project_name + ' with action ' + content_as_json['action'])
+                    projects.delete(project_name)
                     return project_name.encode('utf-8')
                 return content
         request.setResponseCode(403)
