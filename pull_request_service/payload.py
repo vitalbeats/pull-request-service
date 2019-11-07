@@ -23,7 +23,7 @@ class PayloadHandler(resource.Resource):
             if len(sig_parts) > 1 and hmac.compare_digest(sig_parts[1], digest):
                 content_as_json = json.loads(content)
                 projects = project.ProjectLoader()
-                projects.print()
+                # projects.print()
                 if event == 'pull_request':
                     project_name = content_as_json['repository']['name'].lower() + '-pr-' + str(content_as_json['number'])
                     print('Received pull request notification for ' + project_name + ' with action ' + content_as_json['action'])
