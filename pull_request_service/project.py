@@ -18,8 +18,12 @@ class ProjectList():
         self.dyn_client = DynamicClient(client.ApiClient(configuration=k8s_config))
 
     def delete(self, project_name):
-        for project in self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').get():
-            log.msg('Found project ' + str(project) + ' within Openshift.')
-            if project != None and project.metadata.name == project_name:
-                log.msg('Found matching project, will delete.')
-                self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').delete(name=project_name)
+        projects = self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').get()
+        if projects == None:
+            log.msg('Unable to fetch projects.')
+        else:
+            for project in projects:
+                log.msg('Found project ' + str(project) + ' within Openshift.')
+                if project != None and project.metadata.name == project_name:
+                    log.msg('Found matching project, will delete.')
+                    self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').delete(name=project_name)
