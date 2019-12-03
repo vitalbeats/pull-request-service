@@ -19,6 +19,7 @@ class ProjectList():
 
     def delete(self, project_name):
         projects = self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').get()
+        log.msg('Project fetch returned ' + str(projects))
         if projects == None:
             log.msg('Unable to fetch projects.')
         else:
