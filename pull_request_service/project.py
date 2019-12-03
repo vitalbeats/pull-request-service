@@ -22,7 +22,7 @@ class ProjectList():
         if projects == None:
             log.msg('Unable to fetch projects.')
         else:
-            for project in projects.items:)
+            for project in projects.items:
                 if project.metadata.name == project_name:
                     log.msg('Found matching project, will delete.')
                     self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').delete(name=project_name)
