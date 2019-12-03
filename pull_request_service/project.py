@@ -18,5 +18,5 @@ class ProjectList():
 
     def delete(self, project_name):
         for project in self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').get():
-            if project.metadata.name == project_name:
+            if project != None and project.metadata.name == project_name:
                 self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').delete(name=project_name)
