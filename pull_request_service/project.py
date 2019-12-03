@@ -1,6 +1,7 @@
 import yaml
 from kubernetes import client
 from openshift.dynamic import DynamicClient
+from twisted.python import log
 
 class ProjectList():
     dyn_client = None
@@ -18,5 +19,7 @@ class ProjectList():
 
     def delete(self, project_name):
         for project in self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').get():
+            log.msg('Found project ' + str(project) + ' within Openshift.')
             if project != None and project.metadata.name == project_name:
+                log.msg('Found matching project, will delete.')
                 self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project').delete(name=project_name)

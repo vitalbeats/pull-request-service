@@ -1,4 +1,5 @@
 from twisted.web import resource
+from twisted.python import log
 import hmac
 from hashlib import sha1
 import json
@@ -24,8 +25,10 @@ class PayloadHandler(resource.Resource):
                 content_as_json = json.loads(content)
                 projects = project.ProjectList()
                 if event == 'pull_request' and content_as_json['action'] == 'closed':
+                    log.msg('Received a pull request closed payload.')
                     project_name = content_as_json['repository']['name'].lower() + '-pr-' + str(content_as_json['number'])
                     projects.delete(project_name)
+                    log.msg('Successfully handled project delete for ' + project_name)
                     return project_name.encode('utf-8')
                 return content
         request.setResponseCode(403)
