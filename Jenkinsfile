@@ -38,7 +38,7 @@ pipeline {
 
             steps {
                 container('kubectl') {
-                    sh 'kubectl apply -n pull-request-service -k deployment/'
+                    sh 'kubectl apply -n pull-request-service -k kustomize/'
                     sh 'kubectl rollout status -w deployment/pull-request-service -n pull-request-service'
                 }
             }
