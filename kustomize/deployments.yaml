@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pull-request-service
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    name: pull-request-service
+  strategy:
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        name: pull-request-service
+    spec:
+      serviceAccountName: pull-request-service
+      imagePullSecrets:
+        - name: internal-registry
+      volumes:
+      - name: pull-request-secret
+        secret:
+          secretName: pull-request-secret
+      containers:
+      - name: pull-request-service
+        image: registry.vitalbeats.dev/pull-request-service/pull-request-service:latest
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+          name: web
+        volumeMounts:
+        - name: pull-request-secret
+          mountPath: /app/config/secret
+          readOnly: true
+        resources:
+          limits:
+            cpu: 50m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ClusterRoleBinding
+metadata:
+  name: project-deleter-pull-request
+roleRef:
+  kind: ClusterRole
+  name: manage-namespaces
+subjects:
+- name: pull-request-service
+  kind: ServiceAccount
+  namespace: default

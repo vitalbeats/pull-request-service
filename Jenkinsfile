@@ -14,7 +14,7 @@ pipeline {
         stage('Build') {
             steps {
                 container('docker') {
-                    sh 'docker build -t pull-request-service:build .'
+                    sh 'docker build --network=host -t registry.vitalbeats.dev/pull-request-service/pull-request-service:latest .'
                 }
             }
         }
@@ -26,8 +26,20 @@ pipeline {
         
             steps {
                 container('docker') {
-                    sh 'docker tag pull-request-service:build docker-registry.default.svc:5000/openshift-build/pull-request-service:latest'
-                    sh 'docker push docker-registry.default.svc:5000/openshift-build/pull-request-service:latest'
+                    sh 'docker push registry.vitalbeats.dev/pull-request-service/pull-request-service:latest'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'master'
+            }
+
+            steps {
+                container('kubectl') {
+                    sh 'kubectl apply -n pull-request-service -k deployment/'
+                    sh 'kubectl rollout status -w deployment/pull-request-service -n pull-request-service'
                 }
             }
         }

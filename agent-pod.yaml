@@ -5,8 +5,6 @@ metadata:
   name: docker-build-pod
 spec:
   serviceAccountName: jenkins
-  securityContext:
-    runAsUser: 0
   containers:
     - name: docker
       image: docker:latest
@@ -19,17 +17,24 @@ spec:
         - name: dockersocket
           mountPath: /var/run/docker.sock
         - name: dockercfg
-          mountPath: /root
+          mountPath: /root/.docker
           readOnly: true
-        - name: workspace-volume
-          mountPath: /home/jenkins/agent
+    - name: kubectl
+      image: lachlanevenson/k8s-kubectl:latest
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+      tty: true
+      command:
+        - cat
   volumes:
     - name: dockersocket
       hostPath:
         path: /var/run/docker.sock
     - name: dockercfg
       secret:
-        secretName: jenkins-dockercfg-bxzk4
-    - name: workspace-volume
-      emptyDir:
-        medium: Memory
+        secretName: internal-registry
+        items:
+          - key: .dockerconfigjson
+            path: config.json

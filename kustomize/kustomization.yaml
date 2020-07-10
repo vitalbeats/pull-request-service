@@ -1,0 +1,8 @@
+resources:
+ - clusterrolebindings.yaml
+ - deployments.yaml
+ - ingresses.yaml
+ - secrets.yaml
+ - serviceaccounts.yaml
+ - services.yaml
+namespace: pull-request-service
