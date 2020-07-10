@@ -9,7 +9,7 @@ spec:
     matchLabels:
       name: pull-request-service
   strategy:
-    type: Rolling
+    type: RollingUpdate
   template:
     metadata:
       labels:
