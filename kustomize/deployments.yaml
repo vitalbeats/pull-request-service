@@ -6,7 +6,8 @@ spec:
   replicas: 2
   revisionHistoryLimit: 3
   selector:
-    name: pull-request-service
+    matchLabels:
+      name: pull-request-service
   strategy:
     type: Rolling
   template:
