@@ -26,3 +26,7 @@ Role Variables
 | `openshift_pull_request_requests_cpu`   | The requested CPU to apply to pull request service containers.                               | 50m           | No       |
 | `openshift_pull_request_limits_memory`  | The memory limit to apply to pull request service containers.                                | 128Mi         | No       |
 | `openshift_pull_request_requests_memory`| The requested memory to apply to pull request service containers.                            | 128Mi         | No       |
+
+Mapping Projects
+----------------
+There are currently two ways to map an Openshift project to a GitHub pull request. Firstly is by naming convention. By naming your project `<repo-name>-pr-<pr-number>`, the service will identify this as a project that needs managing as part of a pull request's lifecycle. Alternatively, the project can be annotated with `com.vitalbeats.pull-request-service/project-name` with the value matching the convention in the first example. This allows you to be more dynamic with your actual project names if needs be.
