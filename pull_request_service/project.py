@@ -25,7 +25,7 @@ class ProjectList():
             for project in projects.items:
                 if project.metadata.name == project_name:
                     log.msg('Found matching project by name, will delete.')
-                    self.dyn_client.resources.get(api_version='v1', kind='Namespace').delete(name=project_name)
+                    self.dyn_client.resources.get(api_version='v1', kind='Namespace').delete(name=project.metadata.name)
                 if project.metadata.annotations and project.metadata.annotations['com.vitalbeats.pull-request-service/project-name'] == project_name:
                     log.msg('Found matching project by annotation, will delete.')
-                    self.dyn_client.resources.get(api_version='v1', kind='Namespace').delete(name=project_name)
+                    self.dyn_client.resources.get(api_version='v1', kind='Namespace').delete(name=project.metadata.name)
