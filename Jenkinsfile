@@ -13,7 +13,7 @@ pipeline {
     stages {  
         stage('Build') {
             steps {
-                container('docker') {
+                container('build') {
                     sh 'docker build --network=host -t registry.vitalbeats.dev/pull-request-service/pull-request-service:latest .'
                 }
             }
@@ -25,7 +25,7 @@ pipeline {
             }
         
             steps {
-                container('docker') {
+                container('build') {
                     sh 'docker push registry.vitalbeats.dev/pull-request-service/pull-request-service:latest'
                 }
             }
@@ -37,7 +37,7 @@ pipeline {
             }
 
             steps {
-                container('kubectl') {
+                container('build') {
                     sh 'kubectl apply -n pull-request-service -k kustomize/'
                     sh 'kubectl rollout status -w deployment/pull-request-service -n pull-request-service'
                 }

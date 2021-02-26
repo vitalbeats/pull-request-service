@@ -1,7 +1,4 @@
-FROM python:3.7
-
-RUN pip3 install poetry
-RUN poetry config virtualenvs.create false
+FROM vitalbeats/poetry:1.1.4
 
 WORKDIR /app
 COPY . /app
